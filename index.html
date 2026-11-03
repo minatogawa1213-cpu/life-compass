@@ -119,8 +119,29 @@ const strategies={
 'お金':'①収入・固定費・変動費を数字で把握する。②生活・健康・安全を優先する。③大きな判断は一晩置き、必要なら専門家に相談する。'
 };
 let data=load();
-function load(){try{return JSON.parse(localStorage.getItem(STORE))||{checks:{},reflections:[],problems:[],notes:[],settings:{}}}catch(e){return {checks:{},reflections:[],problems:[],notes:[],settings:{}}}}
-function persist(){localStorage.setItem(STORE,JSON.stringify(data));renderProgress()}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function isObj(v){return v!==null&&typeof v==='object'&&!Array.isArray(v)}
+function isDateKey(s){return typeof s==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s)}
+function cleanText(v,max){return String(v??'').slice(0,max||20000)}
+function emptyData(){return {checks:{},reflections:[],problems:[],notes:[],settings:{}}}
+function normalizeData(x){
+  if(!isObj(x))return null;
+  if(!isObj(x.checks)||!Array.isArray(x.reflections))return null;
+  if(x.problems!==undefined&&!Array.isArray(x.problems))return null;
+  if(x.notes!==undefined&&!Array.isArray(x.notes))return null;
+  let out=emptyData();
+  let dayKeys=Object.keys(x.checks).filter(isDateKey).slice(0,3660);
+  for(let d of dayKeys){let day=isObj(x.checks[d])?x.checks[d]:{};let nd={};for(let k of Object.keys(day)){if(/^(morningList|noonList|nightList|five)-[0-9]$/.test(k))nd[k]=!!day[k]}out.checks[d]=nd}
+  let types=['怒り','嫉妬','不安','執着','傲慢','先延ばし','失敗','対人関係','お金'];
+  out.reflections=x.reflections.slice(0,20000).filter(isObj).filter(r=>isDateKey(r.date)).map(r=>({date:r.date,good:cleanText(r.good),bad:cleanText(r.bad),cause:cleanText(r.cause,200),improve:cleanText(r.improve)}));
+  out.problems=(x.problems||[]).slice(0,20000).filter(isObj).filter(r=>isDateKey(r.date)).map(r=>({date:r.date,type:types.includes(r.type)?r.type:'',event:cleanText(r.event),feeling:cleanText(r.feeling),next:cleanText(r.next)}));
+  out.notes=(x.notes||[]).slice(0,20000).filter(isObj).filter(r=>isDateKey(r.date)).map(r=>({date:r.date,text:cleanText(r.text)}));
+  let s=isObj(x.settings)?x.settings:{};let tm=v=>/^([01]\d|2[0-3]):[0-5]\d$/.test(v||'')?v:null;
+  out.settings={reminders:!!s.reminders,morningTime:tm(s.morningTime)||'07:00',noonTime:tm(s.noonTime)||'12:30',nightTime:tm(s.nightTime)||'21:00'};
+  return out;
+}
+function load(){try{let x=JSON.parse(localStorage.getItem(STORE));if(!x)return emptyData();return normalizeData(x)||emptyData()}catch(e){return emptyData()}}
+function persist(){try{localStorage.setItem(STORE,JSON.stringify(data))}catch(e){showToast('保存できませんでした（容量不足の可能性があります）');return false}renderProgress();return true}
 function today(){return new Date().toLocaleDateString('sv-SE')}
 function showToast(s){let t=document.getElementById('toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
 function renderChecks(id,arr){document.getElementById(id).innerHTML=arr.map((x,i)=>`<label class="item"><input type="checkbox" data-check="${id}-${i}" ${data.checks[today()]?.[id+'-'+i]?'checked':''}><span>${x}</span></label>`).join('');document.querySelectorAll(`[data-check^="${id}-"]`).forEach(el=>el.addEventListener('change',e=>{data.checks[today()]??={};data.checks[today()][e.target.dataset.check]=e.target.checked;persist()}))}
@@ -131,11 +152,11 @@ function showStrategy(){let p=document.getElementById('problem').value;document.
 function saveQuickNote(){let v=document.getElementById('quickNote').value.trim();if(!v)return showToast('内容を入力してください');data.notes.unshift({date:today(),text:v});document.getElementById('quickNote').value='';persist();renderJournal();showToast('記録しました')}
 function saveReflection(){let r={date:today(),good:good.value,bad:bad.value,cause:cause.value,improve:improve.value};if(!r.good&&!r.bad&&!r.improve)return showToast('何か1つ入力してください');data.reflections.unshift(r);persist();renderJournal();renderInsights();showToast('振り返りを保存しました')}
 function saveProblem(){let r={date:today(),type:problem.value,event:event.value,feeling:feeling.value,next:nextAction.value};if(!r.event&&!r.feeling)return showToast('状況か感情を入力してください');data.problems.unshift(r);event.value='';feeling.value='';nextAction.value='';persist();renderJournal();renderInsights();showToast('記録しました')}
-function renderJournal(){let a=[...data.reflections.map(x=>({...x,type:'振り返り'})),...data.problems.map(x=>({...x,type:'問題記録'})),...data.notes.map(x=>({...x,type:'ひとこと'}))].sort((a,b)=>b.date.localeCompare(a.date));document.getElementById('journalList').innerHTML=a.length?a.slice(0,60).map(x=>`<div class="entry"><b>${x.type} · ${x.date}</b><p>${[x.good,x.bad,x.cause,x.improve,x.type==='問題記録'?x.type+'：'+x.event+'／感情：'+x.feeling+'／次の行動：'+x.next:x.text].filter(Boolean).join('\\n')}</p></div>`).join(''):'<div class="empty">まだ記録がありません。今日の気づきを残してみましょう。</div>'}
+function renderJournal(){let a=[...data.reflections.map(x=>({...x,type:'振り返り'})),...data.problems.map(x=>({...x,type:'問題記録'})),...data.notes.map(x=>({...x,type:'ひとこと'}))].sort((a,b)=>b.date.localeCompare(a.date));document.getElementById('journalList').innerHTML=a.length?a.slice(0,60).map(x=>`<div class="entry"><b>${esc(x.type)} · ${esc(x.date)}</b><p>${esc([x.good,x.bad,x.cause,x.improve,x.type==='問題記録'?'問題記録：'+x.event+'／感情：'+x.feeling+'／次の行動：'+x.next:x.text].filter(Boolean).join('\n'))}</p></div>`).join(''):'<div class="empty">まだ記録がありません。今日の気づきを残してみましょう。</div>'}
 function renderInsights(){let dates=Object.keys(data.checks).sort().slice(-7),all=dates.reduce((s,d)=>s+Object.values(data.checks[d]).filter(Boolean).length,0),max=dates.length*20;weekRate.textContent=(max?Math.round(all/max*100):0)+'%';activeDays.textContent=dates.length+'日';reflectionCount.textContent=data.reflections.length;problemCount.textContent=data.problems.length;let types=['怒り','嫉妬','不安','執着','傲慢','先延ばし','失敗','対人関係','お金'];let month=today().slice(0,7);let counts=types.map(t=>[t,data.problems.filter(x=>x.date.startsWith(month)&&x.type===t).length]);let maxCount=Math.max(1,...counts.map(x=>x[1]));principleStats.innerHTML=counts.map(([t,n])=>`<div class="barrow"><span>${t}</span><div class="bar"><i style="width:${n/maxCount*100}%"></i></div><b>${n}</b></div>`).join('');let m=today().slice(0,7),rs=data.reflections.filter(x=>x.date.startsWith(m)),ps=data.problems.filter(x=>x.date.startsWith(m));monthSummary.textContent=`${m}：振り返り ${rs.length}回、問題記録 ${ps.length}回。記録の回数は良し悪しではありません。繰り返す場面と、改善できた行動を読み返しましょう。`}
 function saveSettings(){data.settings={reminders:reminders.checked,morningTime:morningTime.value,noonTime:noonTime.value,nightTime:nightTime.value};persist();if(data.settings.reminders&&'Notification'in window)Notification.requestPermission();showToast('設定を保存しました')}
 function exportData(){let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='life-compass-backup-'+today()+'.json';a.click();URL.revokeObjectURL(a.href)}
-function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x.checks||!x.reflections)throw 0;data=x;persist();init();showToast('復元しました')}catch(err){alert('バックアップファイルを読み込めませんでした')}};r.readAsText(f)}
+function importData(e){let f=e.target.files[0];e.target.value='';if(!f)return;if(f.size>10*1024*1024){alert('ファイルが大きすぎます（上限10MB）');return}let r=new FileReader();r.onload=()=>{let x;try{x=JSON.parse(r.result)}catch(err){alert('バックアップファイルを読み込めませんでした');return}let nd=normalizeData(x);if(!nd){alert('バックアップファイルを読み込めませんでした');return}let dates=[...Object.keys(nd.checks),...nd.reflections.map(r=>r.date),...nd.problems.map(r=>r.date),...nd.notes.map(r=>r.date)].sort();let range=dates.length?dates[0]+' ～ '+dates[dates.length-1]:'なし';if(!confirm('現在の記録は、選択したバックアップの内容で置き換えられます。\n\nチェック記録：'+Object.keys(nd.checks).length+'日分\n振り返り：'+nd.reflections.length+'件\n問題記録：'+nd.problems.length+'件\nひとこと：'+nd.notes.length+'件\n期間：'+range+'\n\n復元しますか？'))return;data=nd;if(persist()){init();showToast('復元しました')}else{init();alert('復元した内容を保存できませんでした（容量不足の可能性があります）')}};r.readAsText(f)}
 function clearData(){if(confirm('すべての記録を削除します。この操作は取り消せません。バックアップはありますか？')){localStorage.removeItem(STORE);data=load();init();showToast('記録を消去しました')}}
 function jump(id){document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));window.scrollTo(0,0)}
 document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>jump(b.dataset.page)));
