@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#263c35">
+<meta name="description" content="自分を知り、自分を律し、人を大切にするための人生習慣アプリ">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="LIFE COMPASS">
+<title>LIFE COMPASS</title>
+<style>
+:root{--bg:#f5f2e9;--paper:#fffdf7;--ink:#263c35;--muted:#788078;--line:#e5e0d4;--gold:#b99a60;--green:#496b59;--soft:#e9eee8;--danger:#a65d50;--shadow:0 8px 28px rgba(38,60,53,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;padding-bottom:calc(82px + env(safe-area-inset-bottom))}
+button,input,textarea,select{font:inherit}button{cursor:pointer}
+header{background:var(--ink);color:#f8f4e9;padding:22px 20px 20px;border-radius:0 0 24px 24px}
+.brand{display:flex;align-items:center;gap:12px}.mark{width:46px;height:46px;border:1px solid #b99a60;border-radius:15px;display:grid;place-items:center;color:#e4d2aa;font-size:25px}
+.brand small{display:block;color:#c9c8b9;letter-spacing:.16em;font-size:9px;margin-bottom:3px}.brand strong{font-family:Georgia,serif;letter-spacing:.08em;font-size:20px}
+header p{margin:17px 0 0;font-size:13px;color:#e3e1d5;line-height:1.7}
+main{max-width:720px;margin:0 auto;padding:18px 16px 30px}
+.topline{display:flex;justify-content:space-between;align-items:center;margin:4px 2px 12px}.date{font-size:12px;color:var(--muted)}.streak{font-size:11px;color:var(--green);font-weight:700}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:17px;margin:12px 0;box-shadow:var(--shadow)}
+.card h2{font-size:16px;margin:0 0 5px}.sub{font-size:11px;color:var(--muted);margin:0 0 14px}
+.progress-head{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700}.percent{font:22px Georgia,serif;color:var(--green)}
+.track{height:8px;background:#e9e6dc;border-radius:20px;overflow:hidden;margin-top:10px}.fill{height:100%;background:var(--green);width:0;transition:width .2s}
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 0}.quick button{border:1px solid var(--line);background:var(--paper);border-radius:15px;padding:13px 6px;color:var(--ink);font-weight:700;font-size:12px}.quick span{display:block;font-size:21px;margin-bottom:5px}
+.item{display:flex;align-items:flex-start;gap:11px;padding:11px 0;border-top:1px solid #eee9df;font-size:13px;line-height:1.55}.item:first-of-type{border-top:0}.item input{appearance:none;flex:none;width:20px;height:20px;border:1.5px solid #b9b9a9;border-radius:6px;margin:0;position:relative}.item input:checked{background:var(--green);border-color:var(--green)}.item input:checked:after{content:"✓";color:white;position:absolute;left:3px;top:-1px;font-size:15px}
+.quote{font-family:Georgia,serif;text-align:center;color:var(--green);font-size:16px;margin:16px 4px 3px}
+.nav{position:fixed;z-index:5;bottom:0;left:0;right:0;background:rgba(255,253,247,.96);backdrop-filter:blur(14px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:9px 4px calc(8px + env(safe-area-inset-bottom))}
+.nav button{border:0;background:none;color:#858a80;font-size:10px;min-width:52px;padding:4px}.nav button b{display:block;font-size:19px;font-weight:400;margin-bottom:2px}.nav button.active{color:var(--green);font-weight:800}
+.page{display:none}.page.active{display:block}.section-title{font:22px Georgia,serif;margin:4px 0 4px}.intro{font-size:12px;color:var(--muted);line-height:1.7;margin:0 0 16px}
+.tenet{border-top:1px solid var(--line);padding:14px 0}.tenet:first-child{border-top:0}.tenet-head{display:flex;gap:10px;align-items:center}.num{font:20px Georgia,serif;color:var(--gold);width:26px}.tenet strong{font-size:14px}.tenet p{font-size:12px;color:var(--muted);margin:5px 0 8px}.tenet ul{padding-left:18px;margin:0;font-size:12px;line-height:1.9}
+.field{margin:12px 0}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);background:#fff;border-radius:11px;padding:11px;color:var(--ink);font-size:13px}.field textarea{min-height:78px;resize:vertical;line-height:1.6}
+.btn{border:0;border-radius:12px;background:var(--ink);color:white;padding:12px 15px;font-size:13px;font-weight:700}.btn.secondary{background:var(--soft);color:var(--ink);border:1px solid #dbe3da}.btn.danger{background:#f5e9e6;color:var(--danger)}.btnrow{display:flex;gap:8px;flex-wrap:wrap}.btnrow .btn{flex:1}
+.entry{border-top:1px solid var(--line);padding:12px 0;font-size:12px}.entry small{color:var(--muted)}.entry p{white-space:pre-wrap;line-height:1.6;margin:7px 0}
+.metric-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.metric{background:var(--soft);border-radius:14px;padding:13px}.metric b{font:23px Georgia,serif;display:block}.metric span{font-size:11px;color:var(--muted)}
+.barrow{display:grid;grid-template-columns:70px 1fr 30px;gap:8px;align-items:center;margin:10px 0;font-size:11px}.bar{height:8px;background:#e9e6dc;border-radius:10px;overflow:hidden}.bar i{display:block;height:100%;background:var(--gold)}
+.hint{font-size:11px;color:var(--muted);line-height:1.7}.empty{font-size:12px;color:var(--muted);padding:14px 0}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#263c35;color:white;padding:10px 15px;border-radius:20px;font-size:12px;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1}
+@media(min-width:650px){main{padding-top:24px}.quick button{padding:17px}.card{padding:21px}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="mark">⌖</div><div><small>MY PERSONAL LIFE GUIDE</small><strong>LIFE COMPASS</strong></div></div><p>自分を知り、自分を律し、人を大切にする。<br>完璧な一日より、誠実な一日を。</p></header>
+<main>
+<div class="topline"><span class="date" id="todayLabel"></span><span class="streak" id="streakLabel">今日の一歩を始めましょう</span></div>
+
+<section class="page active" id="home">
+ <div class="card"><div class="progress-head"><span>今日の実践状況</span><span class="percent" id="percent">0%</span></div><div class="track"><div class="fill" id="progress"></div></div><p class="hint" id="progressText">できたことを積み重ねましょう。</p></div>
+ <div class="quick"><button onclick="jump('morning')"><span>☀</span>朝のチェック</button><button onclick="jump('noon')"><span>◉</span>昼のチェック</button><button onclick="jump('night')"><span>☾</span>夜のチェック</button></div>
+ <div class="card"><h2>今日の人生の5原則</h2><p class="sub">迷ったときに立ち返る、毎日の基準</p><div id="fiveChecks"></div></div>
+ <div class="card"><h2>今日の言葉</h2><p class="quote" id="dailyQuote">勝つより、良く生きる。</p></div>
+ <div class="card"><h2>今日のひとこと記録</h2><p class="sub">気づいたことを短く残す</p><div class="field"><textarea id="quickNote" placeholder="今日、気づいたこと・大切にしたいこと…"></textarea></div><button class="btn" onclick="saveQuickNote()">記録する</button></div>
+</section>
+
+<section class="page" id="morning"><h1 class="section-title">Morning</h1><p class="intro">朝の3分｜今日の方向を決める</p><div class="card"><div id="morningList"></div><p class="quote">勝つより、良く生きる。</p></div></section>
+<section class="page" id="noon"><h1 class="section-title">Midday</h1><p class="intro">昼の1分｜感情と行動を点検する</p><div class="card"><div id="noonList"></div><p class="quote">今の行動は恐れからか、価値観からか？</p></div></section>
+<section class="page" id="night"><h1 class="section-title">Evening</h1><p class="intro">夜の5分｜失敗を学びに変える</p><div class="card"><div id="nightList"></div><p class="quote">失敗は反省材料であって、自分の価値ではない。</p></div><div class="card"><h2>今日の振り返り</h2><div class="field"><label>今日よかったこと</label><textarea id="good" placeholder="小さなことでも3つ…"></textarea></div><div class="field"><label>うまくいかなかったこと・感情</label><textarea id="bad" placeholder="怒り、嫉妬、見栄、先延ばしなど。責めずに事実を書く。"></textarea></div><div class="field"><label>原因は何だったか</label><select id="cause"><option value="">選択してください</option><option>疲れていた</option><option>恐れていた</option><option>執着していた</option><option>承認欲求だった</option><option>情報・準備が不足していた</option><option>その他</option></select></div><div class="field"><label>明日の改善点（1つ）</label><textarea id="improve" placeholder="明日、具体的に何を変える？"></textarea></div><button class="btn" onclick="saveReflection()">振り返りを保存</button></div></section>
+
+<section class="page" id="principles"><h1 class="section-title">Ten Principles</h1><p class="intro">人生の十訓｜原則・起こりやすい問題・具体的な対策</p><div class="card" id="principlesList"></div></section>
+
+<section class="page" id="tools"><h1 class="section-title">Reset & Respond</h1><p class="intro">感情や問題が起きたとき、次の行動を選び直す。</p><div class="card"><h2>今の状態を選ぶ</h2><div class="field"><label>問題の種類</label><select id="problem" onchange="showStrategy()"><option value="怒り">怒り</option><option value="嫉妬">嫉妬・比較</option><option value="不安">不安</option><option value="執着">執着</option><option value="傲慢">傲慢</option><option value="先延ばし">先延ばし</option><option value="失敗">失敗・後悔</option><option value="対人関係">対人関係・裏切り</option><option value="お金">お金の不安</option></select></div><div id="strategy" class="hint"></div></div><div class="card"><h2>問題を記録する</h2><div class="field"><label>何が起きた？</label><textarea id="event" placeholder="事実を短く書く"></textarea></div><div class="field"><label>そのとき何を感じた？</label><textarea id="feeling" placeholder="感情を否定せずに書く"></textarea></div><div class="field"><label>次に取る行動</label><textarea id="nextAction" placeholder="小さく具体的な行動"></textarea></div><button class="btn" onclick="saveProblem()">記録する</button></div></section>
+
+<section class="page" id="journal"><h1 class="section-title">Journal</h1><p class="intro">自分を責めるためではなく、自分を理解するための記録。</p><div class="card"><h2>記録一覧</h2><div id="journalList"></div></div></section>
+
+<section class="page" id="insights"><h1 class="section-title">Growth</h1><p class="intro">点数で自分を裁かず、行動の傾向を見つける。</p><div class="card"><h2>今週の記録</h2><div class="metric-grid"><div class="metric"><b id="weekRate">0%</b><span>チェック実行率</span></div><div class="metric"><b id="activeDays">0日</b><span>記録した日数</span></div><div class="metric"><b id="reflectionCount">0</b><span>振り返り回数</span></div><div class="metric"><b id="problemCount">0</b><span>問題の記録回数</span></div></div></div><div class="card"><h2>問題の種類別記録（今月）</h2><div id="principleStats"></div></div><div class="card"><h2>月ごとの振り返り</h2><div id="monthSummary" class="hint"></div></div></section>
+
+<section class="page" id="settings"><h1 class="section-title">Settings</h1><p class="intro">通知・データ管理・このアプリについて</p><div class="card"><h2>リマインダー</h2><p class="hint">通知はブラウザやiOSの設定に左右されます。アプリを閉じている間の時刻どおりの通知は保証されません。</p><div class="field"><label><input type="checkbox" id="reminders"> リマインダーを有効にする</label></div><div class="field"><label>朝の時刻</label><input type="time" id="morningTime" value="07:00"></div><div class="field"><label>昼の時刻</label><input type="time" id="noonTime" value="12:30"></div><div class="field"><label>夜の時刻</label><input type="time" id="nightTime" value="21:00"></div><button class="btn" onclick="saveSettings()">設定を保存</button></div><div class="card"><h2>データのバックアップ</h2><p class="hint">記録はこの端末のブラウザ内に保存されます。機種変更・ブラウザデータ削除に備え、定期的に書き出してください。</p><div class="btnrow"><button class="btn" onclick="exportData()">データを書き出す</button><button class="btn secondary" onclick="document.getElementById('importFile').click()">復元する</button></div><input type="file" id="importFile" accept="application/json" hidden onchange="importData(event)"><p class="hint" style="margin-top:12px">記録をすべて消去する場合は下のボタンを使用します。</p><button class="btn danger" onclick="clearData()">すべての記録を消去</button></div><div class="card"><h2>このアプリの原則</h2><p class="hint">宗教・哲学に見られる倫理的な共通要素を、日常の実践に翻訳した個人用ツールです。各宗教の教義を完全に代表するものではありません。医療・心理療法の代替でもありません。</p><p class="hint">LIFE COMPASS · Personal use</p></div></section>
+</main>
+<nav class="nav">
+<button class="active" data-page="home"><b>⌂</b>ホーム</button><button data-page="principles"><b>✧</b>十訓</button><button data-page="tools"><b>↗</b>対策</button><button data-page="journal"><b>▤</b>日記</button><button data-page="insights"><b>⌁</b>分析</button><button data-page="settings"><b>⚙</b>設定</button>
+</nav><div class="toast" id="toast"></div>
+<script>
+const STORE='lifeCompass_v1';
+const daily={
+ morning:['感謝できることを3つ考えた','自分が間違う可能性を認識した','今日一番大切なことを決めた','誰か1人に親切にすると決めた','避けずに取り組むことを1つ決めた'],
+ noon:['怒りに支配されていないか確認した','嫉妬や比較に振り回されていないか確認した','恐れや不安だけで行動していないか確認した','他人の話をきちんと聞いているか確認した','水分・休息・運動を意識した'],
+ night:['今日よかったことを3つ思い出した','人を傷つけなかったか振り返った','自分に嘘をつかなかったか振り返った','失敗の原因を考えた','明日の改善点を1つ決めた'],
+ five:['感謝を忘れていないか','執着に振り回されていないか','傲慢になっていないか','人とのつながりを大切にしたか','自分に正直だったか']
+};
+const principles=[
+['感謝する','当たり前の日常を当たり前と思わない。',['不満ばかり感じる','他人と比較する','幸せを感じにくい'],['毎朝、感謝できることを3つ書く','自分が既に持っているものを確認する','小さな幸運を記録する']],
+['謙虚でいる','自分が正しいとは限らない。',['自分の考えに固執する','人の意見を否定する','知らないことを認められない'],['反対意見を最後まで聞く','相手の意見の正しい部分を探す','「分からない」と素直に言う']],
+['自分を律する','感情や欲望に人生を支配させない。',['怒りに任せて発言する','嫉妬する','衝動買いをする'],['返答の前に10秒待つ','比較を止め自分の課題に戻る','購入前に24時間考える']],
+['他者を尊重する','自分と他人は違っていてよい。',['相手を自分の価値観で判断する','人の話を遮る','相手を見下す'],['相手の事情を確認する','最後まで聞いてから話す','人格ではなく行動について話す']],
+['親切にする','見返りを求めず、人の役に立つ。',['見返りを期待する','自分の利益を優先する','困っている人を見過ごす'],['感謝されなくてもできる親切をする','相手にとっての利益も考える','できる範囲の小さな支援をする']],
+['公平でいる','自分に都合のよい判断をしない。',['自分の失敗を正当化する','好き嫌いで判断する','利益を優先する'],['自分と相手の立場を入れ替える','事実と感情を分ける','長期的な信頼を基準にする']],
+['勇気を持つ','正しいと思うことから逃げない。',['失敗を恐れる','面倒なことを先延ばしする','他人の目を気にする'],['失敗した場合の対処法を先に考える','まず5分だけ始める','自分の価値観に照らして判断する']],
+['許す','怒りや過去に自分の人生を支配させない。',['過去の失敗を引きずる','他人を恨み続ける','自分を責め続ける'],['失敗から学んだことを1つ書く','期待と現実を切り離す','反省と自己否定を区別する']],
+['意味を持って生きる','お金や名声だけを人生の目的にしない。',['お金が目的になる','忙しさに追われる','他人の評価に依存する'],['お金を何のために使うか決める','毎日最重要の行動を1つ決める','自分の価値基準を言葉にする']],
+['学び続ける','自分はまだ成長できると考える。',['同じ失敗を繰り返す','過去の成功に固執する','人の忠告を聞けない'],['原因と改善策を記録する','新しい知識や方法を試す','批判から有益な部分を探す']]
+];
+const strategies={
+'怒り':'①すぐに返答せず10秒止まる。②「事実」「自分の解釈」「感情」を分けて書く。③必要なら時間を置いて、具体的な要望を伝える。',
+'嫉妬':'①比較の対象からいったん離れる。②相手の何が羨ましいのかを言語化する。③自分が望むことに変換し、今日できる小さな一歩を決める。',
+'不安':'①不安を「事実」「予測」「自分で制御できること」に分ける。②制御できることを1つ実行する。③情報不足なら信頼できる情報を確認する。',
+'執着':'①失いたくないものを具体化する。②結果を完全には支配できないと認める。③自分が選べる行動に集中する。',
+'傲慢':'①自分の判断に反対する証拠を探す。②影響を受ける人の視点を聞く。③必要なら訂正し、謝る。',
+'先延ばし':'①作業を5分でできる最小単位に分ける。②開始時刻と場所を決める。③終わらなくても着手を成功として記録する。',
+'失敗':'①事実と自己評価を分ける。②原因を「準備・判断・環境・疲労」に分ける。③再発防止策を1つだけ決める。',
+'対人関係':'①即時の報復や決めつけを避ける。②事実・希望・境界線を整理する。③必要なら距離を置き、記録や第三者の助けを使う。',
+'お金':'①収入・固定費・変動費を数字で把握する。②生活・健康・安全を優先する。③大きな判断は一晩置き、必要なら専門家に相談する。'
+};
+let data=load();
+function load(){try{return JSON.parse(localStorage.getItem(STORE))||{checks:{},reflections:[],problems:[],notes:[],settings:{}}}catch(e){return {checks:{},reflections:[],problems:[],notes:[],settings:{}}}}
+function persist(){localStorage.setItem(STORE,JSON.stringify(data));renderProgress()}
+function today(){return new Date().toLocaleDateString('sv-SE')}
+function showToast(s){let t=document.getElementById('toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+function renderChecks(id,arr){document.getElementById(id).innerHTML=arr.map((x,i)=>`<label class="item"><input type="checkbox" data-check="${id}-${i}" ${data.checks[today()]?.[id+'-'+i]?'checked':''}><span>${x}</span></label>`).join('');document.querySelectorAll(`[data-check^="${id}-"]`).forEach(el=>el.addEventListener('change',e=>{data.checks[today()]??={};data.checks[today()][e.target.dataset.check]=e.target.checked;persist()}))}
+function renderFive(){document.getElementById('fiveChecks').innerHTML=daily.five.map((x,i)=>`<label class="item"><input type="checkbox" data-check="five-${i}" ${data.checks[today()]?.['five-'+i]?'checked':''}><span>${x}</span></label>`).join('');document.querySelectorAll('[data-check^="five-"]').forEach(el=>el.addEventListener('change',e=>{data.checks[today()]??={};data.checks[today()][e.target.dataset.check]=e.target.checked;persist()}))}
+function renderProgress(){let c=data.checks[today()]||{},keys=Object.keys(c),n=keys.filter(k=>c[k]).length,total=20;let p=Math.round(n/total*100);document.getElementById('percent').textContent=p+'%';document.getElementById('progress').style.width=p+'%';document.getElementById('progressText').textContent=n===0?'できたことを積み重ねましょう。':`${n}項目を実践しました。未達成を責めず、気づきを大切に。`}
+function renderPrinciples(){document.getElementById('principlesList').innerHTML=principles.map((p,i)=>`<div class="tenet"><div class="tenet-head"><span class="num">${String(i+1).padStart(2,'0')}</span><strong>${p[0]}</strong></div><p>${p[1]}</p><div style="font-size:11px;font-weight:700;margin:7px 0 3px">起こりやすい問題</div><ul>${p[2].map(x=>`<li>${x}</li>`).join('')}</ul><div style="font-size:11px;font-weight:700;margin:8px 0 3px">具体的な対策</div><ul>${p[3].map(x=>`<li>${x}</li>`).join('')}</ul></div>`).join('')}
+function showStrategy(){let p=document.getElementById('problem').value;document.getElementById('strategy').innerHTML='<b>おすすめの対応</b><br>'+strategies[p]}
+function saveQuickNote(){let v=document.getElementById('quickNote').value.trim();if(!v)return showToast('内容を入力してください');data.notes.unshift({date:today(),text:v});document.getElementById('quickNote').value='';persist();renderJournal();showToast('記録しました')}
+function saveReflection(){let r={date:today(),good:good.value,bad:bad.value,cause:cause.value,improve:improve.value};if(!r.good&&!r.bad&&!r.improve)return showToast('何か1つ入力してください');data.reflections.unshift(r);persist();renderJournal();renderInsights();showToast('振り返りを保存しました')}
+function saveProblem(){let r={date:today(),type:problem.value,event:event.value,feeling:feeling.value,next:nextAction.value};if(!r.event&&!r.feeling)return showToast('状況か感情を入力してください');data.problems.unshift(r);event.value='';feeling.value='';nextAction.value='';persist();renderJournal();renderInsights();showToast('記録しました')}
+function renderJournal(){let a=[...data.reflections.map(x=>({...x,type:'振り返り'})),...data.problems.map(x=>({...x,type:'問題記録'})),...data.notes.map(x=>({...x,type:'ひとこと'}))].sort((a,b)=>b.date.localeCompare(a.date));document.getElementById('journalList').innerHTML=a.length?a.slice(0,60).map(x=>`<div class="entry"><b>${x.type} · ${x.date}</b><p>${[x.good,x.bad,x.cause,x.improve,x.type==='問題記録'?x.type+'：'+x.event+'／感情：'+x.feeling+'／次の行動：'+x.next:x.text].filter(Boolean).join('\\n')}</p></div>`).join(''):'<div class="empty">まだ記録がありません。今日の気づきを残してみましょう。</div>'}
+function renderInsights(){let dates=Object.keys(data.checks).sort().slice(-7),all=dates.reduce((s,d)=>s+Object.values(data.checks[d]).filter(Boolean).length,0),max=dates.length*20;weekRate.textContent=(max?Math.round(all/max*100):0)+'%';activeDays.textContent=dates.length+'日';reflectionCount.textContent=data.reflections.length;problemCount.textContent=data.problems.length;let types=['怒り','嫉妬','不安','執着','傲慢','先延ばし','失敗','対人関係','お金'];let month=today().slice(0,7);let counts=types.map(t=>[t,data.problems.filter(x=>x.date.startsWith(month)&&x.type===t).length]);let maxCount=Math.max(1,...counts.map(x=>x[1]));principleStats.innerHTML=counts.map(([t,n])=>`<div class="barrow"><span>${t}</span><div class="bar"><i style="width:${n/maxCount*100}%"></i></div><b>${n}</b></div>`).join('');let m=today().slice(0,7),rs=data.reflections.filter(x=>x.date.startsWith(m)),ps=data.problems.filter(x=>x.date.startsWith(m));monthSummary.textContent=`${m}：振り返り ${rs.length}回、問題記録 ${ps.length}回。記録の回数は良し悪しではありません。繰り返す場面と、改善できた行動を読み返しましょう。`}
+function saveSettings(){data.settings={reminders:reminders.checked,morningTime:morningTime.value,noonTime:noonTime.value,nightTime:nightTime.value};persist();if(data.settings.reminders&&'Notification'in window)Notification.requestPermission();showToast('設定を保存しました')}
+function exportData(){let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='life-compass-backup-'+today()+'.json';a.click();URL.revokeObjectURL(a.href)}
+function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x.checks||!x.reflections)throw 0;data=x;persist();init();showToast('復元しました')}catch(err){alert('バックアップファイルを読み込めませんでした')}};r.readAsText(f)}
+function clearData(){if(confirm('すべての記録を削除します。この操作は取り消せません。バックアップはありますか？')){localStorage.removeItem(STORE);data=load();init();showToast('記録を消去しました')}}
+function jump(id){document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));window.scrollTo(0,0)}
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>jump(b.dataset.page)));
+function init(){todayLabel.textContent=new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'long'});renderChecks('morningList',daily.morning);renderChecks('noonList',daily.noon);renderChecks('nightList',daily.night);renderFive();renderPrinciples();showStrategy();renderJournal();renderInsights();renderProgress();let s=data.settings||{};reminders.checked=!!s.reminders;morningTime.value=s.morningTime||'07:00';noonTime.value=s.noonTime||'12:30';nightTime.value=s.nightTime||'21:00';}
+init();
+let lastReminderKey='';
+function checkReminderClock(){
+  if(!data.settings?.reminders || !('Notification' in window) || Notification.permission!=='granted') return;
+  const now=new Date(), hhmm=now.toTimeString().slice(0,5), d=today();
+  const slots=[['morningTime','朝のチェック'],['noonTime','昼のチェック'],['nightTime','夜のチェック']];
+  for(const [key,label] of slots){
+    const stamp=d+'-'+key+'-'+hhmm;
+    if(data.settings[key]===hhmm && lastReminderKey!==stamp){
+      lastReminderKey=stamp;
+      new Notification('LIFE COMPASS',{body:label+'の時間です。1分だけ自分の状態を確認しましょう。'});
+    }
+  }
+}
+setInterval(checkReminderClock,30000);
+if('serviceWorker'in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body></html>
